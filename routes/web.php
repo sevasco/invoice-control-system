@@ -21,3 +21,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/invoice', 'InvoiceController');
 
+Route::resource('/customers', 'CustomerController');
+
