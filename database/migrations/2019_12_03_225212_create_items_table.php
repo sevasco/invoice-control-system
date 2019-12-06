@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableItems extends Migration
+class CreateItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class CreateTableItems extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps('create_date');
+            $table->timestamp('create_date');
             $table->string('item_code', 250);
             $table->string('item_name', 250);
             $table->decimal('item_quantity', 10, 2);
