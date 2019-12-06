@@ -15,10 +15,9 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id');
-            $table->timestamp('invoice_date');
-            $table->string('customer_name', 250);
-            $table->string('customer_address', 250);
+            $table->date('create at');
+            $table->date('due date');
+            $table->date('receipt date');
             $table->decimal('subtotal', 10, 2);
             $table->decimal('tax', 10, 2);
             $table->double('total', 10, 2);
