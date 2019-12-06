@@ -15,15 +15,12 @@ class CreateTableItems extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
-
-            $table->increments('invoice_item_id', 11);
-            $table->increments('item_id', 11);
+            $table->timestamps('create_date');
             $table->string('item_code', 250);
             $table->string('item_name', 250);
-            $table->decimal('invoice_item_quantity', 10, 2);
-            $table->decimal('invoice_item_price',10, 2);
-            $table->decimal('invoice_item_final_amount', 10,2);
+            $table->decimal('item_quantity', 10, 2);
+            $table->decimal('item_price', 10, 2);
+            $table->decimal('item_total_amount', 10, 2);
         });
     }
 
