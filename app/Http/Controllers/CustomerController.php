@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -26,7 +36,9 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+        return view('customers.create', [
+
+        ]);
     }
 
     /**
