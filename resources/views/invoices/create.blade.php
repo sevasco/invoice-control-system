@@ -10,10 +10,10 @@
 
     <div class="row">
         <div class="col">
-            <form action="/customers" method="post">
+            <form action="/invoice" method="post">
                 <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Type a title">
+                    <label for="title">Factura de Venta</label>
+                    <input type="text" class="form-control" id="invoices" name="invoice no" placeholder="Type a invoice no.">
                 </div>
             </form>
         </div>
@@ -23,7 +23,7 @@
     <div>
         <div>
             <button class="btn btn-primary btn-lg" type="submit">Save</button>
-            <a class="btn btn-secondary btn-lg float-right" href="/customers">Back</a>
+            <a class="btn btn-secondary btn-lg float-right" href="/invoice">Back</a>
         </div>
     </div>
 
