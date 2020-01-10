@@ -15,11 +15,11 @@ class CreateInvoiceItemsTable extends Migration
     {
         Schema::create('invoice_items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('invoice_id');
-            $table->unsignedInteger('item_id');
+            $table->unsignedBigInteger('invoice_id');
+            $table->unsignedBigInteger('item_id');
             $table->timestamps();
-            //$table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
-            //$table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('invoice_id')->references('id')->on('invoices');
+            $table->foreign('item_id')->references('id')->on('items');
         });
     }
 
