@@ -16,16 +16,21 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->decimal('subtotal', 10, 2);
-            $table->decimal('tax', 10, 2);
+            $table->decimal('tax', 10, 2)->unsigned();
             $table->double('total', 10, 2);
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamp('received_at')->nullable();
+            $table->dateTime('issued_at');
+            $table->dateTime('expires_at')->nullable();;
+            $table->dateTime('received_at')->nullable();
+            $table->string('description')->nullable();
+            $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('customer_id');
-
+            $table->unsignedBigInteger('seller_id');
+            $table->string('number')->nullable()->unique();
+            $table->foreign('status_id')->references('id')->on('statuses')->onDelete('cascade');
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('seller_id')->references('id')->on('sellers')->onDelete('cascade');
             $table->timestamps();
 
-
-            $table->foreign('customer_id')->references('id')->on('customers');
         });
     }
 
