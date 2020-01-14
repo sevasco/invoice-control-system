@@ -75,6 +75,7 @@
 
         <main class="py-4">
             <div class="container">
+                @includeWhen($errors->any(), 'layouts.__validation_errors')
                 @yield('content')
             </div>
         </main>

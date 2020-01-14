@@ -14,29 +14,18 @@
     </div>
 
     <div>
-        <table id="data-table" class="table table-condensed table-striped">
+        <table id="invoices" class="table table-condensed table-striped">
             <thead>
-            <tr>
-                <th>Invoice No.</th>
-                <th>Create Date</th>
-                <th>Customer Name</th>
-                <th>Invoice Total</th>
-                <th>Print</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-            </thead>
-    </div>
 
-
-
-    <div class="row">
-        <div class="col">
-            <table class="table">
                 <tr>
-                    <td> Hola !</td>
+
                 </tr>
-            </table>
-        </div>
+
+            </thead>
+        </table>
     </div>
+
+
+
+
 @endsection

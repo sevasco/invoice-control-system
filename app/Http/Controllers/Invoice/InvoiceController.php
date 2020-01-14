@@ -49,7 +49,11 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $invoice = new invoice();
+        $invoice -> invoice = $request -> get('invoice');
+        $invoice -> save();
+
+        return redirect('/invoice');
     }
 
     /**
