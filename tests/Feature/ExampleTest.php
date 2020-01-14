@@ -14,8 +14,12 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
-        $response = $this->get('/');
+        // Migrar la base de datos, hacer seed
+        // Crear un usuario
+        // Autenticar el usuario
+        $response = $this->get('/customers/create');
 
+        // HTTP Codes
         $response->assertStatus(200);
     }
 }

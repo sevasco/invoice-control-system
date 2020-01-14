@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\DocumentType;
 use App\Http\Requests\Customers\StoreRequest;
 use App\Http\Requests\Customers\UpdateRequest;
 use Illuminate\Http\Request;
@@ -38,9 +39,10 @@ class CustomerController extends Controller
      */
     public function create()
     {
-
+        $documentTypes = DocumentType::all();
         return view('customers.create', [
             'customer' => new Customer,
+            'document_types' => $documentTypes,
         ]);
     }
 
