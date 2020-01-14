@@ -22,14 +22,19 @@ class CustomerController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $customers = Customer::all();
+        $documentTypes = DocumentType::all();
+        return response()->view('customers.index', [
+            'customers' => $customers,
+            'document_types' => $documentTypes,
+            'request' => $request,
+        ]);
 
-        return view('customers.index', compact('customers'));
     }
 
     /**
@@ -78,7 +83,11 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
-        return response()->view('customers.edit', compact('customer'));
+        $documentTypes = DocumentType::all();
+        return response()->view('customers.edit', [
+            'customer' => $customer,
+            'document_types' => $documentTypes,
+        ]);
     }
 
     /**
@@ -106,5 +115,17 @@ class CustomerController extends Controller
         $customer->delete();
 
         return redirect()->route('customers.index');
+    }
+
+    /**
+     * Display the specified resource filtering by name.
+     * @param Request $request
+     */
+    public function search(Request $request) {
+        $customers = Customer::where('name', 'like', '%'. $request->name .'%')
+            ->orderBy('name')
+            ->limit('100')
+            ->get();
+        echo $customers;
     }
 }

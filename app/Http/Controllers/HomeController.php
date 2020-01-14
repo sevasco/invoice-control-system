@@ -27,9 +27,4 @@ class HomeController extends Controller
 
     }
 
-    public function dashboard()
-    {
-        return redirect('/dashboard');
-
-    }
 }

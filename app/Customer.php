@@ -8,7 +8,7 @@ class Customer extends Model
 {
 
     protected $fillable = [
-        'identification','document_type_id','name','address','phone_number','cell_phone_number','email',
+        'identification','document_type','name','address','phone_number','cell_phone_number','email',
     ];
 
     public function invoices()
@@ -18,9 +18,10 @@ class Customer extends Model
 
     /**
      * Relation between customers and document types
-     * @return BelongsTo
+     * @return BelongsTo|\Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function document_type(): BelongsTo {
+    public function document_type()
+    {
         return $this->belongsTo(DocumentType::class);
     }
 

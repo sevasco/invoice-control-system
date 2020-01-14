@@ -15,12 +15,44 @@
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-md-3">{{ __('Name') }}</dt>
-                <dd class="col-md-3">{{ $customer->name }}</dd>
-                <dt class="col-md-3">{{ __('Identification') }}</dt>
-                <dd class="col-md-3">{{ $customer->identification }}</dd>
-                <dt class="col-md-3">{{ __('Address') }}</dt>
-                <dd class="col-md-9">{{ $customer->address }}</dd>
+                <table class="table border-rounded table-sm">
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Name") }}</td>
+                        <td class="td-content">{{ $customer->name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Document Type") }}</td>
+                        <td class="td-content">{{ $customer->document_type->fullname }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("ID Number") }}</td>
+                        <td class="td-content">{{ $customer->identification}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Phone:")}}</td>
+                        <td class="td-content">{{ $customer->phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Cell phone:")}}</td>
+                        <td class="td-content">{{ $customer->cell_phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Address:")}}</td>
+                        <td class="td-content">{{ $customer->address }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Email:")}}</td>
+                        <td class="td-content">{{ $customer->email }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Created at:")}}</td>
+                        <td class="td-content">{{ $customer->created_at }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("Updated at:")}}</td>
+                        <td class="td-content">{{ $customer->updated_at }}</td>
+                    </tr>
+                </table>
             </dl>
         </div>
     </div>

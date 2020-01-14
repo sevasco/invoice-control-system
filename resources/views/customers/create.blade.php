@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <h1 class="text-xl-center">New Customer</h1>
+            <h1 class="text-xl-center">{{ __('New customer') }}</h1>
         </div>
     </div>
 
@@ -19,8 +19,8 @@
 
     <div>
         <div>
-            <button class="btn btn-primary btn-lg" type="submit" form="customersForm">Save</button>
-            <a class="btn btn-secondary btn-lg float-right" href="{{ route('customers.index') }}">Back</a>
+            <a class="btn-link text-black-50 float-left" href="{{ route('customers.index') }}">{{ __('Back') }}</a>
+            <button class="btn btn-primary btn-lg float-right" type="submit" form="customersForm">{{ __('Save')}}</button>
         </div>
     </div>
 
