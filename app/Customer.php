@@ -3,12 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer extends Model
 {
 
     protected $fillable = [
-        'identification','document_type','name','address','phone_number','cell_phone_number','email',
+        'identification','document_type_id','name','address','phone_number','cell_phone_number','email',
     ];
 
     public function invoices()
