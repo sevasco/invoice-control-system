@@ -24,7 +24,7 @@
         <label for="document_type_id" class="required">{{ __("Document Type") }}</label>
         <select id="document_type_id" name="document_type_id"
                 class="form-control @error('document_type_id') is-invalid @enderror">
-            <option value="">{{ __("Ingresa el tipo de documento") }} </option>
+            <option value="">{{ __("Escoge el tipo de documento") }} </option>
             @foreach($document_types as $document_type)
                 <option value="{{ $document_type->id }}" {{ old('document_type_id', $customer->document_type_id) == $document_type->id ? 'selected' : '' }}>
                     {{ $document_type->fullname }}

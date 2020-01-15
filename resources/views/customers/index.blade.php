@@ -13,35 +13,6 @@
             <br></br>
         </div>
     </div>
-    <h5> Search</h5>
-    <form action="{{ route('customers.index') }}" method="get">
-        <div class="col-md-3">
-            <label for="document_type_id">{{ __("Document Type") }}</label>
-            <select id="document_type_id" name="document_type_id" class="form-control">
-                <option value="">--</option>
-                @foreach($document_types as $document_type)
-                    <option value="{{ $document_type->id }}" {{ $request->get('document_type_id') == $document_type->id ? 'selected' : ''}}>
-                        {{ $document_type->fullname }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="identification">{{ __("ID Number") }}</label>
-            <input type="number" id="identification" name="identification" class="form-control" placeholder="ID Number" value="{{ $request->get('identification') }}">
-        </div>
-        <br>
-        <div class="form-group row">
-            <div class="col-md-3 btn-group btn-group-sm">
-                <button type="submit" class="btn btn-primary text-center">
-                    <i class="fa fa-search"></i> {{ __("Search") }}
-                </button>
-                <a href="{{ route('customers.index') }}" class="btn btn-danger text-center">
-                    <i class="fa fa-undo"></i> {{ __("Clean") }}
-                </a>
-            </div>
-        </div>
-    </form>
     <div class="row">
         <div class="col">
             <table class="table table-hover">
