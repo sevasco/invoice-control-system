@@ -25,6 +25,5 @@ Route::resource('invoices', 'InvoiceController');
 
 Route::resource('customers', 'CustomerController');
 
-Route::get('customers/search', 'CustomerController@search')->name('customers.search');
 
 

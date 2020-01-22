@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Invoice;
+use App\Status;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -36,8 +37,9 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        return view('invoices.create', [
-
+        return response()->view('invoices.create', [
+            'invoice' => new Invoice,
+            'statuses' => Status::all(),
         ]);
     }
 
