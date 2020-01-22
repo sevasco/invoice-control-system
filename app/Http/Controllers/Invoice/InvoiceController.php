@@ -23,10 +23,22 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('invoices.index', [
-
+        $invoices = Invoice::orderBy('id', 'DESC')
+            ->number($request->get('number'))
+            ->status($request->get('status_id'))
+            ->client($request->get('client_id'))
+            ->seller($request->get('seller_id'))
+            ->product($request->get('product_id'))
+            ->issuedDate($request->get('issued_init'), $request->get('issued_final'))
+            ->overduedDate($request->get('overdued_init'), $request->get('overdued_final'))
+            ->paginate(10);
+        return response()->view('invoices.index', [
+            'invoices' => $invoices,
+            'states' => State::all(),
+            'request' => $request,
+            'side_effect' => __('Se borrarán todos sus detalles asociados')
         ]);
     }
 

@@ -17,10 +17,7 @@ class CreateItemsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 250);
             $table->string('description')->nullable();
-            $table->decimal('quantity', 10, 2);
             $table->decimal('unit_price', 10, 2);
-            $table->decimal('item_tax', 10, 2);
-            $table->decimal('item_total_amount', 10, 2);
             $table->timestamps();
         });
     }

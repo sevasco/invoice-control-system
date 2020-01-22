@@ -15,12 +15,10 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->decimal('subtotal', 10, 2);
-            $table->decimal('tax', 10, 2)->unsigned();
-            $table->double('total', 10, 2);
             $table->dateTime('issued_at');
             $table->dateTime('expires_at')->nullable();;
             $table->dateTime('received_at')->nullable();
+            $table->float('vat')->unsigned();
             $table->string('description')->nullable();
             $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('customer_id');
