@@ -23,8 +23,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="text-center">
-                    <a class="btn btn-primary" href="{{ route('customers.index') }}">Customers</a>
-                    <a class="btn btn-primary" href="{{ route('invoices.index') }}">Invoice</a>
+                        <a class="btn btn-primary" href="{{ route('customers.index') }}">{{ __('Customers') }}</a>
+                        <a class="btn btn-primary" href="{{ route('invoices.index') }}">{{ __('Invoice') }}</a>
+                        <a class="btn btn-primary" href="{{ route('sellers.index') }}">{{ __('Sellers') }}</a>
+                        <a class="btn btn-primary" href="{{ route('items.index') }}">{{ __('Items') }}</a>
                     </div>
                 </div>
             </div>
