@@ -54,19 +54,22 @@
     </form>
 @endsection
 @section('Header')
-    <th scope="col">{{ __("Documento") }}</th>
-    <th scope="col" nowrap>{{ __("Nombre") }}</th>
-    <th scope="col">{{ __("Dirección") }}</th>
-    <th scope="col">{{ __("Correo electrónico") }}</th>
-    <th scope="col">{{ __("Celular") }}</th>
-    <th scope="col">{{ __("Opciones") }}</th>
+    <th scope="col">{{ __("Document Type") }}</th>
+    <th scope="col">{{ __("Document") }}</th>
+    <th scope="col">{{ __("Name") }}</th>
+    <th scope="col">{{ __("Address") }}</th>
+    <th scope="col">{{ __("Email") }}</th>
+    <th scope="col">{{ __("Cell phone") }}</th>
+    <th scope="col">{{ __("Options") }}</th>
+    <th></th>
 @endsection
 @section('Body')
     @foreach($sellers as $seller)
         <tr class="text-center">
+            <td>{{ $seller->document_type->name }}</td>
             <td>
                 <a href="{{ route('sellers.show', $seller) }}">
-                    {{ $seller->document_type->name }} {{ $seller->document }}
+                    {{ $seller->document}}
                 </a>
             </td>
             <td>{{ $seller->name }}</td>

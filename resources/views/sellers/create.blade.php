@@ -16,9 +16,4 @@
         <button class="btn btn-success btn-lg float-right" type="submit" href="{{ route('sellers.index') }}" form="sellersForm">{{ __('Save') }} </button>
         <a class="tn-link text-black-50 btn-lg float-left" href="{{ route('sellers.index') }}" >{{ __('Back') }}</a>
     </div>
-
-
-
-
-
 @endsection
