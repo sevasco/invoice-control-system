@@ -28,7 +28,7 @@ class Invoice extends Model
     }
 
     /**
-     * Relation between invoices and products
+     * Relation between invoices and items
      * @return BelongsToMany
      */
     public function item(): BelongsToMany {
@@ -39,15 +39,15 @@ class Invoice extends Model
      * Relation between invoices and states
      * @return BelongsTo
      */
-    public function state(): BelongsTo {
-        return $this->belongsTo(State::class);
+    public function status(): BelongsTo {
+        return $this->belongsTo(Status::class);
     }
 
     /** DERIVED ATTRIBUTES */
     public function getSubtotalAttribute() {
         $subtotal = 0;
-        foreach($this->products as $product){
-            $subtotal += $product->pivot->unit_price * $product->pivot->quantity;
+        foreach($this->items as $item){
+            $subtotal += $item->pivot->unit_price * $item->pivot->quantity;
         }
         return $subtotal;
     }
@@ -75,15 +75,15 @@ class Invoice extends Model
         }
     }
 
-    public function scopeState($query, $state_id) {
-        if(trim($state_id) != "") {
-            return $query->where('state_id', $state_id);
+    public function scopeStatus($query, $status_id) {
+        if(trim($status_id) != "") {
+            return $query->where('status_id', $status_id);
         }
     }
 
-    public function scopeClient($query, $client_id) {
-        if(trim($client_id) != "") {
-            return $query->where('client_id', $client_id);
+    public function scopeCustomer($query, $customer_id) {
+        if(trim($customer_id) != "") {
+            return $query->where('customer_id', $customer_id);
         }
     }
 
@@ -92,10 +92,10 @@ class Invoice extends Model
             return $query->where('seller_id', $seller_id);
         }
     }
-    public function scopeProduct($query, $product_id) {
-        if(trim($product_id) != "") {
-            return $query->whereHas('products', function (Builder $query) use ($product_id) {
-                $query->where('product_id', $product_id);
+    public function scopeItem($query, $item_id) {
+        if(trim($item_id) != "") {
+            return $query->whereHas('items', function (Builder $query) use ($item_id) {
+                $query->where('item_id', $item_id);
             });
         }
     }
@@ -106,9 +106,9 @@ class Invoice extends Model
         }
     }
 
-    public function scopeOverduedDate($query, $overdued_init, $overdued_final) {
-        if(trim($overdued_init) != "" && trim($overdued_final) != "") {
-            return $query->whereBetween('overdued_at', [$overdued_init, $overdued_final]);
+    public function scopeExpiredDate($query, $expired_init, $expired_final) {
+        if(trim($expired_init) != "" && trim($expired_final) != "") {
+            return $query->whereBetween('expired_at', [$expired_init, $expired_final]);
         }
     }
 

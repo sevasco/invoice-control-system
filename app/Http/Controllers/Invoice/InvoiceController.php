@@ -2,43 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Invoice;
 use App\Status;
+use App\Invoice;
 use Illuminate\Http\Request;
+use App\Exports\InvoicesExport;
+use App\Imports\InvoicesImport;
+use App\Http\Requests\SaveInvoiceRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InvoiceController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * Display a listing of the resource.
-     *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $invoices = Invoice::orderBy('id', 'DESC')
             ->number($request->get('number'))
-            ->status($request->get('status_id'))
-            ->client($request->get('client_id'))
+            ->status($request->get('state_id'))
+            ->customer($request->get('customer_id'))
             ->seller($request->get('seller_id'))
-            ->product($request->get('product_id'))
+            ->item($request->get('item_id'))
             ->issuedDate($request->get('issued_init'), $request->get('issued_final'))
-            ->overduedDate($request->get('overdued_init'), $request->get('overdued_final'))
+            ->expiredDate($request->get('expired_init'), $request->get('expired_final'))
             ->paginate(10);
         return response()->view('invoices.index', [
             'invoices' => $invoices,
-            'states' => State::all(),
+            'statuses' => Status::all(),
             'request' => $request,
-            'side_effect' => __('Se borrarán todos sus detalles asociados')
         ]);
     }
 
@@ -47,8 +39,7 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         return response()->view('invoices.create', [
             'invoice' => new Invoice,
             'statuses' => Status::all(),
@@ -59,59 +50,98 @@ class InvoiceController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
-    {
-        $invoice = new invoice();
-        $invoice -> invoice = $request -> get('invoice');
-        $invoice -> save();
+    public function store(SaveInvoiceRequest $request) {
+        $result = Invoice::create($request->validated());
 
-        return redirect('/invoice');
+        return redirect()->route('invoices.show', $result->id);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Invoice  $invoice
+     * @param Invoice $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
-    {
-        //
+    public function show(Invoice $invoice) {
+        return response()->view('invoices.show', [
+            'invoice' => $invoice,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Invoice  $invoice
+     * @param Invoice $invoice
      * @return \Illuminate\Http\Response
      */
-    public function edit(Invoice $invoice)
-    {
-        //
+    public function edit(Invoice $invoice) {
+        return response()->view('invoices.edit', [
+            'invoice' => $invoice,
+            'statuses' => Status::all()
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Invoice  $invoice
-     * @return \Illuminate\Http\Response
+     * @param SaveInvoiceRequest $request
+     * @param Invoice $invoice
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Invoice $invoice)
-    {
-        //
+    public function update(SaveInvoiceRequest $request, Invoice $invoice) {
+        $invoice->update($request->validated());
+
+        return redirect()->route('invoices.show', $invoice);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Invoice  $invoice
-     * @return \Illuminate\Http\Response
+     * @param Invoice $invoice
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
-    public function destroy(Invoice $invoice)
-    {
-        //
+    public function destroy(Invoice $invoice) {
+        $invoice->delete();
+
+        return redirect()->route('invoices.index');
+    }
+
+    /**
+     * Export a listing of the resource.
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportExcel() {
+        return Excel::download(new InvoicesExport, 'invoices-list.xlsx');
+    }
+
+    /**
+     * Display a listing of the resource.
+     * @param Request $request
+     * @return \Illuminate\Http\Response & \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function importExcel(Request $request) {
+        $this->validate($request, [
+            'invoices' => 'required|mimes:xls,xlsx'
+        ]);
+        $file = $request->file('invoices');
+        try {
+            Excel::import(new InvoicesImport(), $file);
+            return redirect()->route('invoices.index');
+        }
+        catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures_unsorted = $e->failures();
+            $failures_sorted = array();
+            foreach($failures_unsorted as $failure) {
+                $failures_sorted[$failure->row()][$failure->attribute()] = $failure->errors()[0];
+            }
+            return response()->view('invoices.importErrors', [
+                'failures' => $failures_sorted,
+            ]);
+        }
     }
 }

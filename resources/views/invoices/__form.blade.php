@@ -11,10 +11,10 @@
         @enderror
     </div>
     <div class="col">
-        <label for="overdued_at" class="required">{{ __("Fecha de Vencimiento") }}</label>
-        <input type="datetime-local" name="overdued_at" id="overdued_at" value="{{ old('overdued_at', $invoice->getDateAttribute($invoice->overdued_at)) }}"
-               class="form-control @error('overdued_at') is-invalid @enderror">
-        @error('overdued_at')
+        <label for="expired_at" class="required">{{ __("Fecha de Vencimiento") }}</label>
+        <input type="datetime-local" name="expired_at" id="expired_at" value="{{ old('expired_at', $invoice->getDateAttribute($invoice->expired_at)) }}"
+               class="form-control @error('expired_at') is-invalid @enderror">
+        @error('expired_at')
         <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
