@@ -19,11 +19,18 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware(['auth'])->group(function ()
+{
+    Route::get('home', 'HomeController@index')->name('home');
 
-Route::resource('invoices', 'InvoiceController');
+    Route::resource('invoices', 'InvoiceController');
 
-Route::resource('customers', 'CustomerController');
+    Route::resource('customers', 'CustomerController');
+
+    Route::resource('items', 'ItemController');
+
+    Route::resource('sellers', 'SellerController');
+});
 
 
 
