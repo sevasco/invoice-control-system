@@ -19,12 +19,20 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware(['auth'])->group(function ()
+{
+    Route::get('home', 'HomeController@index')->name('home');
 
-Route::resource('invoices', 'InvoiceController');
+    Route::resource('invoices', 'InvoiceController');
+    Route::get('invoices-export-excel', 'InvoiceController@exportExcel')->name('invoices.exportExcel');
+    Route::post('invoices-import-excel', 'InvoiceController@importExcel')->name('invoices.importExcel');
 
-Route::resource('customers', 'CustomerController');
+    Route::resource('customers', 'CustomerController');
 
-Route::get('customers/search', 'CustomerController@search')->name('customers.search');
+    Route::resource('items', 'ItemController');
+
+    Route::resource('sellers', 'SellerController');
+});
+
 
 

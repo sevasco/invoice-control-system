@@ -24,9 +24,13 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|min:3|max:200',
-            'address' => 'required|string|min:3|max:250',
-            'identification' => 'required|numeric|digits_between:9,15',
+            'name' => 'required|string|min:3|max:50',
+            'identification' => 'required|numeric|digits_between:6,12',
+            'document_type_id' => 'required|numeric|exists:document_types,id',
+            'phone_number' => 'nullable|numeric|digits_between:7,12',
+            'cell_phone_number' => 'required|numeric|digits:10',
+            'address' => 'required|string|min:5|max:250',
+            'email' => 'required|email|string|min:5|max:100',
         ];
     }
 }

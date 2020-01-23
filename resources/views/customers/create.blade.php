@@ -20,7 +20,7 @@
     <div>
         <div>
             <a class="btn-link text-black-50 float-left" href="{{ route('customers.index') }}">{{ __('Back') }}</a>
-            <button class="btn btn-primary btn-lg float-right" type="submit" form="customersForm">{{ __('Save')}}</button>
+            <button class="btn btn-success btn-lg float-right" type="submit" form="customersForm">{{ __('Save')}}</button>
         </div>
     </div>
 

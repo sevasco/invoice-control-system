@@ -45,9 +45,9 @@ class Customer extends Model
         }
     }
 
-    public function scopeDocument($query, $document) {
-        if(trim($document) != ""){
-            return $query->where('document', 'LIKE', "%$document%");
+    public function scopeDocument($query, $identification) {
+        if(trim($identification) != ""){
+            return $query->where('identification', 'LIKE', "%$identification%");
         }
     }
 

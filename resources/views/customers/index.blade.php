@@ -9,7 +9,8 @@
     </div>
     <div class="row">
         <div class="col">
-            <a class="btn btn-primary btn-lg" href="/customers/create"> Create new customer</a>
+            <a class="btn btn-primary btn-lg float-right" href="{{ route('customers.create') }}"> {{ __('Create new customer')}}</a>
+            <a class="btn btn-outline-info btn-lg" href="{{ route('home') }}">{{ __('Go Home') }}</a>
             <br></br>
         </div>
     </div>
@@ -41,7 +42,6 @@
                         <td>{{ $customer->address }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->cell_phone_number }}</td>
-
                         <td class="text-right">
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('customers.show', $customer) }}" class="btn btn-success">{{ __('View') }}</a>
