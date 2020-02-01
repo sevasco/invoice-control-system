@@ -39,6 +39,6 @@ class Customer extends Model
             return $query->where($type, 'like', "%$search%");
         }
     }
-    
+
 
 }

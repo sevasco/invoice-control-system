@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('content')
-
     <div class="row">
         <div class="col">
             <h1 class="text-xl-center">Customers</h1>
@@ -66,7 +64,7 @@
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('customers.show', $customer) }}" class="btn btn-success">{{ __('View') }}</a>
                                 <a href="{{ route('customers.edit', $customer) }}" class="btn btn-info">{{ __('Edit') }}</a>
-                                <button type="submit" class="btn btn-danger" form="deleteCustomer{{ $customer->id }}">{{ __('Delete') }}</button>
+                                <button type="submit" class="btn btn-danger" form="deleteCustomer{{ $customer->id }}" onclick="return confirm('Are you sure?')">{{ __('Delete') }}</button>
                                 <form action="{{ route('customers.destroy', $customer) }}" method="post" id="deleteCustomer{{ $customer->id }}" >
                                     @csrf
                                     @method('DELETE')
@@ -85,10 +83,3 @@
         </div>
     </div>
 @endsection
-
-@push('modals')
-    @include('partials.__confirm_delete_modal')
-@endpush
-@push('scripts')
-    <script src="{{ asset(mix('js/delete-modal.js')) }}"></script>
-@endpush
