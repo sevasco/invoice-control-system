@@ -26,7 +26,7 @@
                     </tr>
                     <tr>
                         <td class="table-dark td-title">{{ __("ID Number") }}</td>
-                        <td class="td-content">{{ $customer->identification}}</td>
+                        <td class="td-content">{{ $customer->document}}</td>
                     </tr>
                     <tr>
                         <td class="table-dark td-title">{{ __("Phone:")}}</td>
@@ -35,6 +35,10 @@
                     <tr>
                         <td class="table-dark td-title">{{ __("Cell phone:")}}</td>
                         <td class="td-content">{{ $customer->cell_phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-dark td-title">{{ __("City:")}}</td>
+                        <td class="td-content">{{ $customer->City->name }}</td>
                     </tr>
                     <tr>
                         <td class="table-dark td-title">{{ __("Address:")}}</td>

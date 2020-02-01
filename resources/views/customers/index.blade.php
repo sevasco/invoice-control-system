@@ -14,14 +14,33 @@
             <br></br>
         </div>
     </div>
+
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <select name="type" class="form-control mr-sm-2" id="select">
+                <option value="">{{ __('Filter by') }}</option>
+                <option value="document">{{ __('ID') }}</option>
+                <option value="name">{{ __('Name') }}</option>
+                <option value="email">{{ __('Email') }}</option>
+            </select>
+
+            <input name="searchfor" class="form-control mr-sm-2" type="search" placeholder="{{ __('Search...') }}">
+
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> {{ __('Search') }}</button>
+            <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit" onClick="window.history.back();">
+                <i class="fas fa-redo-alt"></i> {{ __('Refresh') }}</button>
+        </form>
+    </nav>
+
     <div class="row">
         <div class="col">
             <table class="table table-hover">
-                <thead>
+                <thead class="table-dark text-center">
                 <tr>
                     <th scope="col">{{ __("Document Type") }}</th>
-                    <th scope="col">{{ __("Identification") }}</th>
+                    <th scope="col">{{ __("Document") }}</th>
                     <th scope="col">{{ __("Name") }}</th>
+                    <th scope="col">{{ __("City") }}</th>
                     <th scope="col">{{ __("Address") }}</th>
                     <th scope="col">{{ __("Email") }}</th>
                     <th scope="col">{{ __("Cell phone") }}</th>
@@ -29,16 +48,17 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-center">
                 @foreach($customers as $customer)
                     <tr>
                         <td>{{ $customer->document_type->name }}</td>
                         <td>
                             <a href="{{ route('customers.show', $customer) }}">
-                                 {{ $customer->identification}}
+                                 {{ $customer->document}}
                             </a>
                         </td>
                         <td>{{ $customer->name }}</td>
+                        <td>{{ $customer->City->name }}</td>
                         <td>{{ $customer->address }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->cell_phone_number }}</td>
@@ -47,7 +67,7 @@
                                 <a href="{{ route('customers.show', $customer) }}" class="btn btn-success">{{ __('View') }}</a>
                                 <a href="{{ route('customers.edit', $customer) }}" class="btn btn-info">{{ __('Edit') }}</a>
                                 <button type="submit" class="btn btn-danger" form="deleteCustomer{{ $customer->id }}">{{ __('Delete') }}</button>
-                                <form action="{{ route('customers.destroy', $customer) }}" method="post" id="deleteCustomer{{ $customer->id }}">
+                                <form action="{{ route('customers.destroy', $customer) }}" method="post" id="deleteCustomer{{ $customer->id }}" >
                                     @csrf
                                     @method('DELETE')
                                 </form>
@@ -57,6 +77,18 @@
                 @endforeach
                 </tbody>
             </table>
+
+            <ul class="pagination justify-content-center">
+                {{ $customers->links() }}
+            </ul>
+
         </div>
     </div>
 @endsection
+
+@push('modals')
+    @include('partials.__confirm_delete_modal')
+@endpush
+@push('scripts')
+    <script src="{{ asset(mix('js/delete-modal.js')) }}"></script>
+@endpush

@@ -10,7 +10,7 @@ class Customer extends Model
 {
 
     protected $fillable = [
-        'identification','document_type_id','name','address','phone_number','cell_phone_number','email',
+        'document','document_type_id','name','address','phone_number','cell_phone_number','city_id','email',
     ];
 
     public function invoices()
@@ -27,34 +27,18 @@ class Customer extends Model
         return $this->belongsTo(DocumentType::class);
     }
 
-    /** Mutator */
-    public function setEmailAttribute($value) {
-        $this->attributes['email'] = strtolower($value);
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     /** Query Scopes */
-    public function scopeCustomers($query, $id) {
-        if(trim($id) != ""){
-            return $query->where('id', $id);
+    public function scopeSearchFor($query, $type, $search)
+    {
+        if (($type) && ($search)) {
+            return $query->where($type, 'like', "%$search%");
         }
     }
-
-    public function scopeDocumentType($query, $document_type_id) {
-        if(trim($document_type_id) != ""){
-            return $query->where('document_type_id', $document_type_id);
-        }
-    }
-
-    public function scopeDocument($query, $identification) {
-        if(trim($identification) != ""){
-            return $query->where('identification', 'LIKE', "%$identification%");
-        }
-    }
-
-    public function scopeEmail($query, $email) {
-        if(trim($email) != ""){
-            return $query->where('email', 'LIKE', "%$email%");
-        }
-    }
+    
 
 }

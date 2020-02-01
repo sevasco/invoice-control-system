@@ -20,8 +20,8 @@
 
     <div>
         <div>
-            <button class="btn btn-primary btn-lg" type="submit" form="customersForm">{{ __('Update') }}</button>
-            <a class="btn btn-secondary btn-lg float-right" href="{{ route('customers.index') }}">Back</a>
+            <button class="btn btn-success btn-lg float-right" type="submit" form="customersForm">{{ __('Update') }}</button>
+            <a class="btn-link text-black-50 float-left" href="{{ route('customers.index') }}">Back</a>
         </div>
     </div>
 

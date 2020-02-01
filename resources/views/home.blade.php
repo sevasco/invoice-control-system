@@ -11,7 +11,7 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                        <p class="text-xl-center"> You are logged in! </p>
+                        <h1 class="text-xl-center"> Menu </h1>
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\City;
 use App\DocumentType;
 use App\Http\Requests\Customers\StoreRequest;
 use App\Http\Requests\Customers\UpdateRequest;
@@ -27,9 +28,13 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $customers = Customer::all();
+        $type = $request->get('type');
+        $search = $request->get('searchfor');
+        $customers = Customer::with(['city'])
+            ->searchfor($type, $search)->paginate(5);
         $documentTypes = DocumentType::all();
-        return response()->view('customers.index', [
+        return response()->
+        view('customers.index',  [
             'customers' => $customers,
             'document_types' => $documentTypes,
             'request' => $request,
@@ -44,10 +49,12 @@ class CustomerController extends Controller
      */
     public function create()
     {
+        $cities = City::all();
         $documentTypes = DocumentType::all();
         return view('customers.create', [
             'customer' => new Customer,
             'document_types' => $documentTypes,
+            'cities' => $cities,
         ]);
     }
 
@@ -83,10 +90,12 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
+        $cities = City::all();
         $documentTypes = DocumentType::all();
         return response()->view('customers.edit', [
             'customer' => $customer,
             'document_types' => $documentTypes,
+            'cities' => $cities,
         ]);
     }
 
