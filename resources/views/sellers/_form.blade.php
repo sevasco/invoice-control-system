@@ -61,6 +61,23 @@
         @enderror
     </div>
     <div class="col">
+        <label for="city_id" class="required">{{ __("City") }}</label>
+        <select id="city_id" name="city_id"
+                class="form-control @error('city_id') is-invalid @enderror">
+            <option value="">{{ __("Choose the city") }} </option>
+            @foreach($cities as $city)
+                <option value="{{ $city->id }}" {{ old('city_id', $seller->city_id) == $city->id ? 'selected' : '' }}>
+                    {{ $city->name }}
+                </option>
+            @endforeach
+        </select>
+        @error('city_id')
+        <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
+    </div>
+    <div class="col">
         <label for="address" class="required">{{ __("Address") }}</label>
         <input type="text" name="address" id="address" value="{{ old('address', $seller->address) }}"
                class="form-control @error('address') is-invalid @enderror" placeholder="Enter the address">

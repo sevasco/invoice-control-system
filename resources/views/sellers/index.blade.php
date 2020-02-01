@@ -9,19 +9,6 @@
     <form action="{{ route('sellers.index') }}" method="get">
         <div class="form-group row">
             <div class="col-md-3">
-                <label for="name">{{ __("Name") }}</label>
-                <input type="hidden" id="old_seller_name" name="old_seller_name" value="{{ $request->get('seller') }}">
-                <input type="hidden" id="old_seller_id" name="old_seller_id" value="{{ $request->get('seller_id') }}">
-                <v-select v-model="old_seller_values" label="name" :filterable="false" :options="options" @search="searchSeller"
-                          class="form-control">
-                    <template slot="options">
-                        {{ __("Enter name...") }}
-                    </template>
-                </v-select>
-                <input type="hidden" name="seller" id="seller" :value="(old_seller_values) ? old_seller_values.name : '' ">
-                <input type="hidden" name="seller_id" id="seller_id" :value="(old_seller_values) ? old_seller_values.id : '' ">
-            </div>
-            <div class="col-md-3">
                 <label for="document_type_id">{{ __("Document Type") }}</label>
                 <select id="document_type_id" name="document_type_id" class="form-control">
                     <option value="">--</option>
@@ -57,6 +44,7 @@
     <th scope="col">{{ __("Document Type") }}</th>
     <th scope="col">{{ __("Document") }}</th>
     <th scope="col">{{ __("Name") }}</th>
+    <th scope="col">{{ __("City") }}</th>
     <th scope="col">{{ __("Address") }}</th>
     <th scope="col">{{ __("Email") }}</th>
     <th scope="col">{{ __("Cell phone") }}</th>
@@ -73,6 +61,7 @@
                 </a>
             </td>
             <td>{{ $seller->name }}</td>
+            <td>{{ $seller->City->name }}</td>
             <td>{{ $seller->address }}</td>
             <td>{{ $seller->email }}</td>
             <td>{{ $seller->cell_phone_number }}</td>
@@ -80,7 +69,7 @@
                 <div class="btn-group btn-group-sm">
                     <a href="{{ route('sellers.show', $seller) }}" class="btn btn-success">{{ __('View') }}</a>
                     <a href="{{ route('sellers.edit', $seller) }}" class="btn btn-info">{{ __('Edit') }}</a>
-                    <button type="submit" class="btn btn-danger" form="deleteSeller{{ $seller->id }}">{{ __('Delete') }}</button>
+                    <button type="submit" class="btn btn-danger" form="deleteSeller{{ $seller->id }}" onclick="return confirm('Are you sure?')">{{ __('Delete')  }}</button>
                     <form action="{{ route('sellers.destroy', $seller) }}" method="post" id="deleteSeller{{ $seller->id }}">
                         @csrf
                         @method('DELETE')
@@ -90,3 +79,7 @@
         </tr>
     @endforeach
 @endsection
+@section('Links')
+    {{ $sellers->appends($request->all())->links() }}
+@endsection
+

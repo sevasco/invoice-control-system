@@ -19,18 +19,22 @@ class Seller extends Model
     }
 
     /**
-     * Relation between sellers and type documents
+     * Relation between sellers and document types
      * @return BelongsTo
      */
     public function document_type(): BelongsTo {
         return $this->belongsTo(DocumentType::class);
     }
 
-    /** DERIVED ATTRIBUTES */
-    public function setEmailAttribute($value)
+    /**
+     * Relation between sellers and cities
+     * @return BelongsTo
+     */
+    public function city(): BelongsTo
     {
-        $this->attributes['email'] = strtolower($value);
+        return $this->belongsTo(City::class);
     }
+
 
     /** Query Scopes */
     public function scopeSeller($query, $id){
@@ -54,6 +58,13 @@ class Seller extends Model
     public function scopeEmail($query, $email){
         if(trim($email) != ""){
             return $query->where('email', 'LIKE', "%$email%");
+        }
+    }
+
+    public function scopeSearchFor($query, $type, $search)
+    {
+        if (($type) && ($search)) {
+            return $query->where($type, 'like', "%$search%");
         }
     }
 }

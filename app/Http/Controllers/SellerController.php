@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Seller;
+use App\City;
+use App\Item;
 use App\DocumentType;
 use Illuminate\Http\Request;
-use App\Http\Requests\SaveSellerRequest;
+use App\Http\Requests\Sellers\StoreRequest;
 
 class SellerController extends Controller
 {
@@ -16,12 +18,16 @@ class SellerController extends Controller
      */
     public function index(Request $request)
     {
+        $type = $request->get('type');
+        $search = $request->get('searchfor');
+
         $documentTypes = DocumentType::all();
         $sellers = Seller::orderBy('name')
             ->seller($request->get('seller_id'))
             ->documenttype($request->get('document_type_id'))
             ->document($request->get('document'))
             ->email($request->get('email'))
+            ->searchfor($type, $search)
             ->paginate(10);
         return response()->view('sellers.index', [
             'sellers' => $sellers,
@@ -38,9 +44,11 @@ class SellerController extends Controller
     public function create()
     {
         $documentTypes = DocumentType::all();
+        $cities = City::all();
         return response()->view('sellers.create', [
             'seller' => new Seller,
             'document_types' => $documentTypes,
+            'cities' => $cities,
         ]);
     }
 
@@ -50,7 +58,7 @@ class SellerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(SaveSellerRequest $request)
+    public function store(StoreRequest $request)
     {
         Seller::create($request->validated());
 
@@ -78,21 +86,23 @@ class SellerController extends Controller
      */
     public function edit(Seller $seller)
     {
+        $cities = City::all();
         $documentTypes = DocumentType::all();
         return response()->view('sellers.edit', [
             'seller' => $seller,
             'document_types' => $documentTypes,
+            'cities' => $cities,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param SaveSellerRequest $request
+     * @param StoreRequest $request
      * @param Seller $seller
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(SaveSellerRequest $request, Seller $seller)
+    public function update(StoreRequest $request, Seller $seller)
     {
         $seller->update($request->validated());
 

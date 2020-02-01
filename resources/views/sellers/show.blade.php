@@ -34,6 +34,10 @@
             <td class="td-content">{{ $seller->cell_phone_number }}</td>
         </tr>
         <tr>
+            <td class="table-dark td-title">{{ __("City:")}}</td>
+            <td class="td-content">{{ $seller->City->name }}</td>
+        </tr>
+        <tr>
             <td class="table-dark td-title">{{ __("Address:")}}</td>
             <td class="td-content">{{ $seller->address }}</td>
         </tr>
