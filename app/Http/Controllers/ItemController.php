@@ -14,8 +14,12 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request) {
+
+        $type = $request->get('type');
+        $search = $request->get('searchfor');
+
         $item = Item::orderBy('id')
-            ->item($request->get('item_id'))
+            ->searchfor($type, $search)
             ->paginate(10);
         return response()->view('items.index', [
             'items' => $item,
@@ -96,15 +100,4 @@ class ItemController extends Controller
         return redirect()->route('items.index');
     }
 
-    /**
-     * Display the specified resource filtering by name.
-     * @param Request $request
-     */
-    public function search(Request $request) {
-        $item = Item::where('name', 'like', '%'. $request->name .'%')
-            ->orderBy('name')
-            ->limit('100')
-            ->get();
-        echo $item;
-    }
 }

@@ -126,15 +126,4 @@ class CustomerController extends Controller
         return redirect()->route('customers.index');
     }
 
-    /**
-     * Display the specified resource filtering by name.
-     * @param Request $request
-     */
-    public function search(Request $request) {
-        $customers = Customer::where('name', 'like', '%'. $request->name .'%')
-            ->orderBy('name')
-            ->limit('100')
-            ->get();
-        echo $customers;
-    }
 }

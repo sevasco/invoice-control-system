@@ -6,33 +6,22 @@
     <a class="btn btn-success" href="{{ route('items.create') }}">{{ __("New Item") }}</a>
 @endsection
 @section('Search')
-    <form action="{{ route('items.index') }}" method="get">
-        <div class="form-group row">
-            <div class="col-md-3">
-                <label>{{ __("Name") }}</label>
-                <input type="hidden" id="old_product_name" name="old_product_name" value="{{ $request->get('item') }}">
-                <input type="hidden" id="old_product_id" name="old_product_id" value="{{ $request->get('item_id') }}">
-                <v-select v-model="old_product_values" label="name" :filterable="false" :options="options" @search="searchItem"
-                          class="form-control">
-                    <template slot="no-options">
-                        {{ __("Enter the item name...") }}
-                    </template>
-                </v-select>
-                <input type="hidden" name="item" id="item" :value="(old_product_values) ? old_product_values.name : '' ">
-                <input type="hidden" name="item_id" id="item_id" :value="(old_product_values) ? old_product_values.id : '' ">
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-3 btn-group btn-group-sm">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-search"></i> {{ __("Search") }}
-                </button>
-                <a href="{{ route('items.index') }}" class="btn btn-danger">
-                    <i class="fa fa-undo"></i> {{ __("Clean") }}
-                </a>
-            </div>
-        </div>
-    </form>
+    <nav class="navbar navbar-light bg-light">
+        <!-- Search form -->
+        <form class="form-inline">
+            <select name="type" class="form-control mr-sm-2" id="select">
+                <option value="">{{ __('Filter by') }}</option>
+                <option value="name">{{ __('Name') }}</option>
+                <option value="unit_price">{{ __('Unit Price') }}</option>
+            </select>
+
+            <input name="searchfor" class="form-control mr-sm-2" type="search" placeholder="{{ __('Search...') }}">
+
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> {{ __('Search') }}</button>
+            <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit" onClick="window.history.back();">
+                <i class="fas fa-redo-alt"></i> {{ __('Refresh') }}</button>
+        </form>
+    </nav>
 @endsection
 @section('Header')
     <th scope="col">{{ __("Code") }}</th>
@@ -58,7 +47,7 @@
                 <div class="btn-group btn-group-sm">
                     <a href="{{ route('items.show', $item) }}" class="btn btn-success">{{ __('View') }}</a>
                     <a href="{{ route('items.edit', $item) }}" class="btn btn-info">{{ __('Edit') }}</a>
-                    <button type="submit" class="btn btn-danger" form="deleteSeller{{ $item->id }}">{{ __('Delete') }}</button>
+                    <button type="submit" class="btn btn-danger" form="deleteSeller{{ $item->id }}" onclick="return confirm('Are you sure?')">{{ __('Delete') }}</button>
                     <form action="{{ route('items.destroy', $item) }}" method="post" id="deleteSeller{{ $item->id }}">
                         @csrf
                         @method('DELETE')

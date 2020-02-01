@@ -18,9 +18,10 @@ class Item extends Model
     }
 
     /** Query Scopes */
-    public function scopeItem($query, $id){
-        if(trim($id) != ""){
-            return $query->where('id', $id);
+    public function scopeSearchFor($query, $type, $search)
+    {
+        if (($type) && ($search)) {
+            return $query->where($type, 'like', "%$search%");
         }
     }
 }
