@@ -68,3 +68,6 @@
         </tr>
     @endforeach
 @endsection
+@section('Links')
+    {{ $items->appends($request->all())->links() }}
+@endsection

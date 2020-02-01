@@ -6,7 +6,7 @@
             <div class="btn-group btn-group-sm">
                 <a href="{{ route('customers.index') }}" class="btn btn-success">{{ __('Back') }}</a>
                 <a href="{{ route('customers.edit', $customer) }}" class="btn btn-info">{{ __('Edit') }}</a>
-                <button type="submit" class="btn btn-danger" form="deleteCustomer{{ $customer->id }}">{{ __('Delete') }}</button>
+                <button type="submit" class="btn btn-danger" form="deleteCustomer{{ $customer->id }}" onclick="return confirm('Are you sure?')">{{ __('Delete') }}</button>
                 <form action="{{ route('customers.destroy', $customer) }}" method="post" id="deleteCustomer{{ $customer->id }}">
                     @csrf
                     @method('DELETE')
