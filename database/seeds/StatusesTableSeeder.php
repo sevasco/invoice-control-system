@@ -13,16 +13,16 @@ class StatusesTableSeeder extends Seeder
     public function run()
     {
         Status::create([
-            'name' => 'Pendiente de pago',
+            'name' => 'Issued',
         ]);
         Status::create([
-            'name' => 'Cancelada',
+            'name' => 'Cancelled',
         ]);
         Status::create([
-            'name' => 'Vencida',
+            'name' => 'Expired',
         ]);
         Status::create([
-            'name' => 'Anulada',
+            'name' => 'Voided',
         ]);
     }
 }

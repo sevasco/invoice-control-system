@@ -12,7 +12,6 @@ class DocumentTypesTableSeeder extends Seeder
      */
     public function run()
     {
-        // $data = $this->command->ask('Hola cual es tu nombre');
         DocumentType::create([
             'name' => 'CC',
             'fullname' => 'Cédula de ciudadanía'
