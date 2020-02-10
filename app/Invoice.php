@@ -12,7 +12,7 @@ class Invoice extends Model
     protected $guarded = [];
 
     /**
-     * Relation between invoices and clients
+     * Relation between invoices and customers
      * @return BelongsTo
      */
     public function customer(): BelongsTo {
@@ -44,78 +44,14 @@ class Invoice extends Model
     }
 
     /** DERIVED ATTRIBUTES */
-    public function getSubtotalAttribute() {
-        $subtotal = 0;
-        foreach($this->items as $item){
-            $subtotal += $item->pivot->unit_price * $item->pivot->quantity;
-        }
-        return $subtotal;
-    }
 
-    public function getIvaAmountAttribute() {
-        return $this->getSubtotalAttribute() * $this->vat / 100;
-    }
 
-    public function getTotalAttribute() {
-        return $this->getSubtotalAttribute() + $this->getIvaAmountAttribute();
-    }
-
-    public function getDateAttribute($date) {
-        if (! empty($date)) {
-            return date_format(date_create($date), 'Y-m-d\TH:i:s');
-        }else{
-            return "";
-        }
-    }
 
     /** Query Scopes */
-    public function scopeNumber($query, $number) {
-        if(trim($number) != "") {
-            return $query->where('number', 'LIKE', "%$number%");
-        }
-    }
-
-    public function scopeStatus($query, $status_id) {
-        if(trim($status_id) != "") {
-            return $query->where('status_id', $status_id);
-        }
-    }
-
-    public function scopeCustomer($query, $customer_id) {
-        if(trim($customer_id) != "") {
-            return $query->where('customer_id', $customer_id);
-        }
-    }
-
-    public function scopeSeller($query, $seller_id) {
-        if(trim($seller_id) != "") {
-            return $query->where('seller_id', $seller_id);
-        }
-    }
-    public function scopeItem($query, $item_id) {
-        if(trim($item_id) != "") {
-            return $query->whereHas('items', function (Builder $query) use ($item_id) {
-                $query->where('item_id', $item_id);
-            });
-        }
-    }
-
-    public function scopeIssuedDate($query, $issued_init, $issued_final) {
-        if(trim($issued_init) != "" && trim($issued_final) != "") {
-            return $query->whereBetween('issued_at', [$issued_init, $issued_final]);
-        }
-    }
-
-    public function scopeExpiredDate($query, $expired_init, $expired_final) {
-        if(trim($expired_init) != "" && trim($expired_final) != "") {
-            return $query->whereBetween('expired_at', [$expired_init, $expired_final]);
-        }
-    }
-
-    public function save(array $options = []) {
-        if(parent::save($options)) {
-            $this->number = str_pad($this->id, 5, "0", STR_PAD_LEFT);
-            parent::save();
+    public function scopeSearchFor($query, $type, $search)
+    {
+        if (($type) && ($search)) {
+            return $query->where($type, 'like', "%$search%");
         }
     }
 }

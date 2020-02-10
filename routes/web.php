@@ -25,13 +25,14 @@ Route::middleware(['auth'])->group(function ()
 
     Route::resource('invoices', 'InvoiceController');
     Route::get('invoices-export-excel', 'InvoiceController@exportExcel')->name('invoices.exportExcel');
-    Route::post('invoices-import-excel', 'InvoiceController@importExcel')->name('invoices.importExcel');
+    Route::post('invoices-import-excel', 'InvoiceController@import')->name('invoices.import');
 
     Route::resource('customers', 'CustomerController');
 
     Route::resource('items', 'ItemController');
 
     Route::resource('sellers', 'SellerController');
+
 });
 
 

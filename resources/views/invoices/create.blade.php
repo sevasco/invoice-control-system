@@ -10,6 +10,9 @@
     <div class="row">
         <div class="col">
             <div class="card-body">
+                @if($errors->any())
+                    @json($errors->all())
+                @endif
                 <form action="{{ route('invoices.store') }}" class="form-group" method="POST" id="invoicesForm">
                     @include('invoices.__form')
                 </form>

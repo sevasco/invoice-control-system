@@ -4,96 +4,138 @@ namespace App\Http\Controllers;
 
 use App\Status;
 use App\Invoice;
+use App\Item;
+use App\Seller;
+use App\User;
+use App\Customer;
 use Illuminate\Http\Request;
 use App\Exports\InvoicesExport;
 use App\Imports\InvoicesImport;
-use App\Http\Requests\SaveInvoiceRequest;
+use App\Http\Requests\Invoice\StoreRequest;
+use App\Http\Requests\Invoice\UpdateRequest;
 use Maatwebsite\Excel\Facades\Excel;
 
 class InvoiceController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     * @param Request $request
-     * @return \Illuminate\Http\Response
+     * Create a new controller instance.
+     *
+     * @return void
      */
-    public function index(Request $request) {
-        $invoices = Invoice::orderBy('id', 'DESC')
-            ->number($request->get('number'))
-            ->status($request->get('state_id'))
-            ->customer($request->get('customer_id'))
-            ->seller($request->get('seller_id'))
-            ->item($request->get('item_id'))
-            ->issuedDate($request->get('issued_init'), $request->get('issued_final'))
-            ->expiredDate($request->get('expired_init'), $request->get('expired_final'))
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index(Request $request)
+    {
+        $type = $request->get('type');
+        $search = $request->get('searchfor');
+
+        $invoices = Invoice::with(['customer', 'seller'])
+            ->searchfor($type, $search)
             ->paginate(10);
-        return response()->view('invoices.index', [
-            'invoices' => $invoices,
-            'statuses' => Status::all(),
-            'request' => $request,
-        ]);
+
+        return view('invoices.index', compact( 'invoices'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Invoice $invoice
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create() {
-        return response()->view('invoices.create', [
-            'invoice' => new Invoice,
-            'statuses' => Status::all(),
+    public function create(Invoice $invoice)
+    {
+        $customers = Customer::all();
+        $sellers = Seller::all();
+        $statuses = Status::all();
+        $items = Item::all();
+
+        return view('invoices.create',[
+            'invoices' => new invoice,
+            'sellers' => $sellers,
+            'customers' => $customers,
+            'invoice' => $invoice,
+            'statuses'=> $statuses,
+            'items' => $items,
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  StoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(SaveInvoiceRequest $request) {
-        $result = Invoice::create($request->validated());
+    public function store(StoreRequest $request)
+    {
+        Invoice::create($request->validated());
 
-        return redirect()->route('invoices.show', $result->id);
+
+        return redirect()->route('invoices.index');
     }
 
     /**
      * Display the specified resource.
      *
      * @param Invoice $invoice
-     * @return \Illuminate\Http\Response
+     * @param Item $item
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show(Invoice $invoice) {
-        return response()->view('invoices.show', [
-            'invoice' => $invoice,
-        ]);
+    public function show(Invoice $invoice)
+    {
+        $customers = Customer::all();
+        $sellers = Seller::all();
+        $users = User::all();
+
+        $items = Item::whereNotIn('id', $invoice->items->pluck('id')->values())->get();
+
+        return view('invoices.show', compact( 'sellers', 'customers', 'users', 'invoice', 'items'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param Invoice $invoice
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(Invoice $invoice) {
-        return response()->view('invoices.edit', [
-            'invoice' => $invoice,
-            'statuses' => Status::all()
-        ]);
+    public function edit(Invoice $invoice)
+    {
+        $customers = Customer::all();
+        $sellers = Seller::all();
+        $users = User::all();
+
+        return view('invoices.edit', compact( 'sellers', 'customers', 'users', 'invoice'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param SaveInvoiceRequest $request
+     * @param UpdateRequest $request
      * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(SaveInvoiceRequest $request, Invoice $invoice) {
-        $invoice->update($request->validated());
+    public function update(UpdateRequest $request, Invoice $invoice)
+    {
+        $invoice->issued_at = $request->input('issued_at');
+        $invoice->expired_at = $request->input('expired_at');
+        $invoice->received_at = $request->input('received_at');
+        $invoice->seller_id = $request->input('seller_id');
+        $invoice->sale_description = $request->input('sale_description');
+        $invoice->customer_id = $request->input('customer_id');
+        $invoice->status = $request->input('status');
+        $invoice->user_id = auth()->user()->id;
 
-        return redirect()->route('invoices.show', $invoice);
+        $invoice->save();
+
+        return redirect()->route('invoices.index');
     }
 
     /**
@@ -101,47 +143,64 @@ class InvoiceController extends Controller
      *
      * @param Invoice $invoice
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \Exception
+     * @throws Exception
      */
-    public function destroy(Invoice $invoice) {
+    public function destroy(Invoice $invoice)
+    {
         $invoice->delete();
 
         return redirect()->route('invoices.index');
     }
 
-    /**
-     * Export a listing of the resource.
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
-     */
-    public function exportExcel() {
-        return Excel::download(new InvoicesExport, 'invoices-list.xlsx');
+    public function addProduct(Invoice $invoice, DetailRequest $request)
+    {
+        $price = $request->input('product_price');
+        $quantity = $request->input('product_quantity');
+        $totalPrice = $price * $quantity;
+        $vat = $totalPrice * 0.19;
+
+        $invoice->items()->attach($request->input('product_id'), [
+            'price' => $price,
+            'quantity' => $quantity,
+        ]);
+
+        $invoice->vat += $vat;
+        $invoice->total += $totalPrice;
+        $invoice->total_with_vat += $totalPrice + $vat;
+
+        $invoice->save();
+
+        return redirect()->route('invoices.show', $invoice);
     }
 
-    /**
-     * Display a listing of the resource.
-     * @param Request $request
-     * @return \Illuminate\Http\Response & \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function importExcel(Request $request) {
-        $this->validate($request, [
-            'invoices' => 'required|mimes:xls,xlsx'
+    public function updateProduct(Invoice $invoice, UpdateRequest $request)
+    {
+        $price = $request->input('product_price');
+        $quantity = $request->input('product_quantity');
+        $totalPrice = $price * $quantity;
+        $vat = $totalPrice * 0.19;
+
+        $invoice->items()->updateExistingPivot($request->input('product_id'), [
+            'price' => $price,
+            'quantity' => $quantity,
         ]);
-        $file = $request->file('invoices');
-        try {
-            Excel::import(new InvoicesImport(), $file);
-            return redirect()->route('invoices.index');
-        }
-        catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            $failures_unsorted = $e->failures();
-            $failures_sorted = array();
-            foreach($failures_unsorted as $failure) {
-                $failures_sorted[$failure->row()][$failure->attribute()] = $failure->errors()[0];
-            }
-            return response()->view('invoices.importErrors', [
-                'failures' => $failures_sorted,
-            ]);
-        }
+
+        $invoice->vat += $vat;
+        $invoice->total += $totalPrice;
+        $invoice->total_with_vat += $totalPrice + $vat;
+
+        $invoice->save();
+
+        return redirect()->route('invoices.show', $invoice);
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('file');
+
+        Excel::import(new InvoicesImport, $file);
+
+        return back()->with('message', 'Invoice import succesfully');
     }
 }
+

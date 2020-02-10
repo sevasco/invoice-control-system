@@ -1,143 +1,100 @@
-@extends('layouts.index')
-@section('Title', 'Invoices')
-@section('Name', 'invoices')
-@section('Create')
-    <a class="btn btn-secondary" href="{{ route('invoices.exportExcel') }}">
-        <i class="fa fa-file-excel-o"></i> {{ __("Exportar a Excel") }}
-    </a>
-    <button type="button" class="btn btn-warning" data-route="{{ route('invoices.importExcel') }}" data-toggle="modal" data-target="#importInvoicesModal">
-        <i class="fa fa-file-excel-o"></i> {{ __("Importar desde Excel") }}
-    </button>
-    <a class="btn btn-success" href="{{ route('invoices.create') }}">
-        <i class="fa fa-plus"></i> {{ __("Crear nueva factura") }}
-    </a>
-@endsection
-@section('Search')
-    <form action="{{ route('invoices.index') }}" method="get">
-        <div class="form-group row">
-            <div class="col-md-3">
-                <label for="issued_init">{{ __("Fecha inicial de expedición") }}</label>
-                <input type="date" name="issued_init" id="issued_init" class="form-control" value="{{ $request->get('issued_init') }}">
-            </div>
-            <div class="col-md-3">
-                <label for="issued_final">{{ __("Fecha final de expedición") }}</label>
-                <input type="date" name="issued_final" id="issued_final" class="form-control" value="{{ $request->get('issued_final') }}">
-            </div>
-            <div class="col-md-3">
-                <label for="overdued_init">{{ __("Fecha inicial de vencimiento") }}</label>
-                <input type="date" name="overdued_init" id="overdued_init" class="form-control" value="{{ $request->get('overdued_init') }}">
-            </div>
-            <div class="col-md-3">
-                <label for="overdued_final">{{ __("Fecha final de vencimiento") }}</label>
-                <input type="date" name="overdued_final" id="overdued_final" class="form-control" value="{{ $request->get('overdued_final') }}">
-            </div>
+@extends ('layouts.app')
+
+@section('content')
+    <div class="row">
+        <div class="col">
+            <h1 class="text-xl-center">Invoices</h1>
         </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <label for="number">{{ __("Número de factura") }}</label>
-                <input type="number" id="number" name="number" class="form-control" placeholder="No. de factura" value="{{ $request->get('number') }}">
-            </div>
-            <div class="col-md-3">
-                <label for="state_id">{{ __("Estado") }}</label>
-                <select id="state_id" name="state_id" class="form-control">
-                    <option value="">--</option>
-                    @foreach($statuses as $state)
-                        <option value="{{ $state->id }}" {{ $request->get('state_id') == $state->id ? 'selected' : ''}}>
-                            {{ $state->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label>{{ __("Cliente") }}</label>
-                <input type="hidden" id="old_client_name" name="old_client_name" value="{{ $request->get('client') }}">
-                <input type="hidden" id="old_client_id" name="old_client_id" value="{{ $request->get('client_id') }}">
-                <v-select class="form-control" v-model="old_client_values" label="name" :filterable="false" :options="options" @search="searchClient">
-                    <template slot="no-options">
-                        {{ __("Ingresa el nombre del cliente...") }}
-                    </template>
-                </v-select>
-                <input type="hidden" name="client" id="client" :value="(old_client_values) ? old_client_values.name : '' ">
-                <input type="hidden" name="client_id" id="client_id" :value="(old_client_values) ? old_client_values.id : '' ">
-            </div>
-            <div class="col-md-3">
-                <label>{{ __("Vendedor") }}</label>
-                <input type="hidden" id="old_seller_name" name="old_seller_name" value="{{ $request->get('seller') }}">
-                <input type="hidden" id="old_seller_id" name="old_seller_id" value="{{ $request->get('seller_id') }}">
-                <v-select class="form-control" v-model="old_seller_values" label="name" :filterable="false" :options="options" @search="searchSeller">
-                    <template slot="no-options">
-                        {{ __("Ingresa el nombre del vendedor...") }}
-                    </template>
-                </v-select>
-                <input type="hidden" name="seller" id="seller" :value="(old_seller_values) ? old_seller_values.name : '' ">
-                <input type="hidden" name="seller_id" id="seller_id" :value="(old_seller_values) ? old_seller_values.id : '' ">
-            </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-primary btn-lg float-right"
+               href="{{ route('invoices.create') }}"> {{ __('Create new Invoice')}}</a>
+            <a class="btn btn-outline-info btn-lg" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+            <br></br>
         </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <label>{{ __("Producto") }}</label>
-                <input type="hidden" id="old_product_name" name="old_product_name" value="{{ $request->get('product') }}">
-                <input type="hidden" id="old_product_id" name="old_product_id" value="{{ $request->get('product_id') }}">
-                <v-select class="form-control" v-model="old_product_values" label="name" :filterable="false" :options="options" @search="searchProduct">
-                    <template slot="no-options">
-                        {{ __("Ingresa el nombre del producto...") }}
-                    </template>
-                </v-select>
-                <input type="hidden" name="product" id="product" :value="(old_product_values) ? old_product_values.name : '' ">
-                <input type="hidden" name="product_id" id="product_id" :value="(old_product_values) ? old_product_values.id : '' ">
-            </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table table-hover">
+                <thead class="table-dark text-center">
+                <tr>
+                    <th>{{ __('Code') }}</th>
+                    <th>{{ __('Issued at') }}</th>
+                    <th>{{ __('Expired at') }}</th>
+                    <th>{{ __('Received_at') }}</th>
+                    <th>{{ __('Description') }}</th>
+                    <th>{{ __('Total') }}</th>
+                    <th>{{ __('Seller') }}</th>
+                    <th>{{ __('Customer') }}</th>
+                    <th>{{ __('Status') }}</th>
+                    <th>{{ __('Actions') }}</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                @foreach($invoices as $invoice)
+                    <tr>
+                        <td>{{ $invoice->number }}</td>
+                        <td>{{ $invoice->issued_at }}</td>
+                        <td>{{ $invoice->expired_at }}</td>
+                        <td>{{ $invoice->received_at }}</td>
+                        <td>{{ $invoice->description }}</td>
+                        <td>${{ number_format($invoice->total, 2) }}</td>
+                        <td>{{ $invoice->seller->name }}</td>
+                        <td>{{ $invoice->customer->name }}</td>
+                        <td><h5>
+                                @if($invoice->status_id == '1')<span
+                                    class="badge badge-secondary">{{ __('Issued') }}</span>@endif
+                                @if($invoice->status_id == '3')<span
+                                    class="badge badge-danger">{{ __('Expired') }}</span>@endif
+                                @if($invoice->status_id == '4')<span
+                                    class="badge badge-success">{{ __('Voided') }}</span>@endif
+                                @if($invoice->status_id == '2')<span
+                                    class="badge badge-light">{{ __('Cancelled') }}</span>@endif
+                            </h5></td>
+                        <td class="text-right">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="{{ __('Actions') }}">
+                                <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-link"
+                                   title="{{ __('Show Details') }}">
+                                    <i class="fas fa-eye" style="color:black"></i>
+                                </a>
+                                <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-link"
+                                   title="{{ __('Edit Invoice') }}">
+                                    <i class="fas fa-edit" style="color:black"></i>
+                                </a>
+
+                                <button type="button" class="btn btn-link text-danger"
+                                        data-route="{{ route('invoices.destroy', $invoice) }}"
+                                        data-toggle="modal" data-target="#confirmDeleteModal"
+                                        title="{{ __('Delete Invoice') }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
         </div>
-        <div class="form-group row">
-            <div class="col-md-3 btn-group btn-group-sm">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-search"></i> {{ __("Buscar") }}
-                </button>
-                <a href="{{ route('invoices.index') }}" class="btn btn-danger">
-                    <i class="fa fa-undo"></i> {{ __("Limpiar") }}
-                </a>
-            </div>
+    </div>
+    <div>
+        <!-- Pagination -->
+        <ul class="pagination justify-content-center">
+            {{ $invoices->links() }}
+        </ul>
+
+        <!-- Import form -->
+        <div class="card-footer justify-content-lg-start">
+            <form action="{{ route('invoices.import') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <h5><strong>Import Excel File</strong></h5>
+                <input type="file" name="file" class="form-control-file">
+                <br>
+                <button class="btn btn-success"><i class="fas fa-file-excel"></i> {{ __('Import') }}</button>
+            </form>
         </div>
-    </form>
+    </div>
 @endsection
-@section('Header')
-    <th scope="col" nowrap>{{ __("Título") }}</th>
-    <th scope="col" nowrap>{{ __("Fecha de expedición") }}</th>
-    <th scope="col" nowrap>{{ __("Fecha de vencimiento") }}</th>
-    <th scope="col" nowrap>{{ __("Estado") }}</th>
-    <th scope="col" nowrap>{{ __("Cliente") }}</th>
-    <th scope="col" nowrap>{{ __("Vendedor") }}</th>
-    <th scope="col" nowrap>{{ __("Opciones") }}</th>
-@endsection
-@section('Body')
-    @foreach($invoices as $invoice)
-        <tr class="text-center">
-            <td nowrap>
-                <a href="{{ route('invoices.show', $invoice) }}">
-                    {{ __("Factura de venta No.") }} {{ $invoice->number }}
-                </a>
-            </td>
-            <td nowrap>{{ $invoice->issued_at }}</td>
-            <td nowrap>{{ $invoice->overdued_at }}</td>
-            <td nowrap>{{ $invoice->state->name }}</td>
-            <td nowrap>
-                <a href="{{ route('clients.show', $invoice->client) }}" target="_blank">
-                    {{ $invoice->client->name }}
-                </a>
-            </td>
-            <td nowrap>
-                <a href="{{ route('sellers.show', $invoice->seller) }}" target="_blank">
-                    {{ $invoice->seller->name }}
-                </a>
-            </td>
-            <td class="btn-group btn-group-sm" nowrap>
-                @include('invoices._buttons')
-            </td>
-        </tr>
-    @endforeach
-@endsection
-@section('Links')
-    {{ $invoices->appends($request->all())->links() }}
-@endsection
-@push('modals')
-    @include('partials.__import_invoices_modal')
-@endpush

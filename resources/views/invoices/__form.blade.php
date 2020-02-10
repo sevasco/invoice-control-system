@@ -1,102 +1,109 @@
 @csrf
 <div class="row">
-    <div class="col">
-        <label for="issued_at" class="required">{{ __("Fecha de Expedición") }}</label>
-        <input type="datetime-local" name="issued_at" id="issued_at" value="{{ old('issued_at', $invoice->getDateAttribute($invoice->issued_at)) }}"
-               class="form-control @error('issued_at') is-invalid @enderror">
-        @error('issued_at')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="issued_at">{{ __('Expedition date') }}</label>
+            <input type="date" class="form-control" id="issued_at" name="issued_at"
+                   value="{{ old('issued_at', now()->toDateString()) }}" required>
+        </div>
     </div>
-    <div class="col">
-        <label for="expired_at" class="required">{{ __("Fecha de Vencimiento") }}</label>
-        <input type="datetime-local" name="expired_at" id="expired_at" value="{{ old('expired_at', $invoice->getDateAttribute($invoice->expired_at)) }}"
-               class="form-control @error('expired_at') is-invalid @enderror">
-        @error('expired_at')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="expired_at">{{ __('Expiration date') }}</label>
+            <input type="date" class="form-control" id="expired_at" name="expired_at"
+                   value="{{ old('expired_at', now()->addDays(30)->toDateString()) }}" required>
+        </div>
     </div>
-    <div class="col">
-        <label for="seller_id" class="required">{{ __("Vendedor") }}</label>
-        <input type="hidden" id="old_seller_name" name="old_seller_name" value="{{ old('seller', isset($invoice->seller->name) ? $invoice->seller->name : '') }}">
-        <input type="hidden" id="old_seller_id" name="old_seller_id" value="{{ old('seller_id', isset($invoice->seller->id) ? $invoice->seller->id : '') }}">
-        <v-select v-model="old_seller_values" label="name" :filterable="false" :options="options" @search="searchSeller"
-                  class="form-control @error('seller_id') is-invalid @enderror" >
-            <template slot="no-options">
-                {{ __("Ingresa el nombre del vendedor...") }}
-            </template>
-        </v-select>
-        <input type="hidden" name="seller" id="seller" :value="(old_seller_values) ? old_seller_values.name : '' ">
-        <input type="hidden" name="seller_id" id="seller_id" :value="(old_seller_values) ? old_seller_values.id : '' ">
-        @error('seller_id')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="received_at">{{ __('Receive date') }}</label>
+            <input type="date" class="form-control" id="received_at" name="received_at"
+                   value="{{ old('received_at', $invoice->received_at) }}" required>
+        </div>
     </div>
-</div>
-<br>
-<div class="row">
-    <div class="col">
-        <label for="vat" class="required">{{ __("IVA") }} (%)</label>
-        <input type="number" step="0.01" name="vat" id="vat" value="{{ old('vat', $invoice->vat) }}"
-               class="form-control @error('vat') is-invalid @enderror" placeholder="Ingresa el IVA">
-        @error('vat')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="seller_id">{{ __('Seller') }}</label>
+            <select class="custom-select" id="seller_id" name="seller_id" required>
+                <option value="">{{ __('Select seller') }}</option>
+                @foreach($sellers as $seller)
+                    <option value="{{ $seller->id }}"
+                        {{ old('seller_id', $invoice->seller_id) == $seller->id ? 'selected' : ''}}>{{ $seller->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
     </div>
-    <div class="col">
-        <label for="state_id" class="required">{{ __("Estado") }}</label>
-        <select id="state_id" name="state_id" class="form-control @error('state_id') is-invalid @enderror">
-            <option value="">{{ __("Selecciona el estado") }}</option>
-            @foreach($statuses as $status)
-                <option value="{{ $status->id }}" {{old('status_id', $invoice->status_id) == $status->id ? 'selected' : ''}}>
-                    {{ $status->name }}
-                </option>
-            @endforeach
-        </select>
-        @error('status_id')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="customer_id">{{ __('Customer') }}</label>
+            <select class="custom-select" id="customer_id" name="customer_id" required>
+                <option value="">{{ __('Select customer') }}</option>
+                @foreach($customers as $customer)
+                    <option value="{{ $customer->id }}"
+                        {{ old('customer_id', $invoice->customer_id) == $customer->id ? 'selected' : ''}}>{{ $customer->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
     </div>
-    <div class="col">
-        <label for="client_id" class="required">{{ __("Cliente") }}</label>
-        <input type="hidden" id="old_client_name" name="old_client_name" value="{{ old('client', isset($invoice->seller->name) ? $invoice->seller->name : '') }}">
-        <input type="hidden" id="old_client_id" name="old_client_id" value="{{ old('client_id', isset($invoice->seller->name) ? $invoice->seller->name : '') }}">
-        <v-select v-model="old_client_values" label="name" :filterable="false" :options="options" @search="searchClient"
-                  class="form-control @error('client_id') is-invalid @enderror">
-            <template slot="no-options">
-                {{ __("Ingresa el nombre del cliente...") }}
-            </template>
-        </v-select>
-        <input type="hidden" name="client" id="client" :value="(old_client_values) ? old_client_values.name : '' ">
-        <input type="hidden" name="client_id" id="client_id" :value="(old_client_values) ? old_client_values.id : '' ">
-        @error('client_id')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="status">{{ __('Status') }}</label>
+            <select id="status" name="status" class="custom-select">
+                <option value="">{{ __('Select status') }}</option>
+                @foreach($statuses as $status)
+                    <option value="{{ $status->id }}"
+                        {{ old('status', $invoice->status_id) == $status->id ? 'selected' : ''}}>{{ $status->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="description">{{ __('Sale description') }}</label>
+            <textarea class="form-control" id="description" name="description"
+                      placeholder="{{ __('Type a sale description') }}" required>{{ old('description', $invoice->description) }}
+            </textarea>
+        </div>
     </div>
 </div>
-<br>
-<div class="row">
-    <div class="col">
-        <label for="description">{{ __("Descripción") }}</label>
-        <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">
-            {{ old('description', $invoice->description) }}
-        </textarea>
-        @error('description')
-        <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h4 class="card-title"><strong>{{ __('Items') }}
+                        {{ $invoice->code }}</strong></h4>
+            </div>
+            <div class="row col-sm-10">
+                <div class="form-group col-md-4">
+                    <label for="">{{ __('Item name') }}</label><br>
+                    <select class="custom-select" id="product_id" name="product[1][id]">
+                        <option value="">{{ __('Select a item name') }}</option>
+                        @foreach($items as $item)
+                            <option value="{{ $item->id }}"
+                                {{ old('item_id')[0] == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="">{{ __('Price') }}</label><br>
+                    <input type="number" class="form-control" id="price" name="product[1][price]"
+                           placeholder="{{ __('Type a product price') }}" value="{{ old('price')[0] }}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="quantity">{{ __('Quantity') }}</label><br>
+                    <input type="number" class="form-control" id="quantity" name="product[1][quantity]"
+                           placeholder="{{ __('Type a quantity') }}" value="{{ old('quantity')[0] }}">
+                </div>
+                <div class="input-group-btn">
+                    <button type="button" id="add" class="btn btn-sm btn-success"><i
+                            class="fas fa-fw fa-plus"> Add items</i></button>
+                    <br><br>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
